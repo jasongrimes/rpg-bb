@@ -2,7 +2,7 @@
 /**
  * Template for local configuration that is different in different environments.
  *
- * Rename this file to local.config.php and add set the parameters to appropriate values.
+ * Rename this file to local.config.php and set the parameters to appropriate values.
  *
  * local.config.php should never be committed to version control.
  */
