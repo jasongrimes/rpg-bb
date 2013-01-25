@@ -1,19 +1,6 @@
 <?php
 
-$app = require_once __DIR__ . '/../server/app.php';
-
-$app->run();
-
-
-
-return;
-
-// --- Deprecated -------------------------------------------------------------------
-
-ini_set('html_errors', 0);
-xdebug_disable();
-
-require_once __DIR__.'/../vendor/autoload.php';
+require_once __DIR__ . '/bootstrap.php';
 
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,11 +8,19 @@ use Symfony\Component\HttpFoundation\Response;
 use Playground\PlaygroundMapper;
 use Playground\Playground;
 
-$config = require __DIR__ . '/../local.config.php';
-$config['image_base_url'] = 'http://s3.amazonaws.com/grit-rpg/images'; // TODO: Move this to local config file.
-
 $app = new Application();
-$app['debug'] = true;
+
+if (!defined('ENV')) {
+    define('ENV', getenv('env') ?: 'prod');
+}
+
+if (ENV == 'dev') {
+    $app['debug'] = (ENV == 'dev');
+    ini_set('html_errors', 0);
+    xdebug_disable();
+}
+
+$config = require __DIR__ . '/config/local.config.php';
 
 $app->before(function (Request $request) {
     if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
@@ -44,7 +39,7 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
         'password' => $config['db_master']['pass'],
     ),
 ));
-$playground_mapper = new PlaygroundMapper($app['db'], $config['image_base_url']);
+$playground_mapper = new PlaygroundMapper($app['db']);
 
 // -----------------------------------
 // Routes and controllers
@@ -56,15 +51,15 @@ $app->get('/', function(Application $app) {
 });
 
 // Route: GET: /playgrounds
-$app->get('/playgrounds', function(Application $app, Request $request) use ($playground_mapper) {
+$app->get('/playgrounds', function(Application $app, Request $request) use ($playground_mapper, $config) {
     $playgrounds = $playground_mapper->getPlaygrounds($request->query->all());
-    return $app->json($playgrounds->toArray());
+    return $app->json($playgrounds->toArray($config['image_base_url']));
 });
 
 // Route: GET: /playground/:id
-$app->get('/playground/{id}', function(Application $app, $id) use ($playground_mapper) {
+$app->get('/playground/{id}', function(Application $app, $id) use ($playground_mapper, $config) {
     $playground = $playground_mapper->getPlayground($id);
-    return $app->json($playground->toArray());
+    return $app->json($playground->toArray($config['image_base_url']));
 });
 
 // Route: POST: /playgrounds
@@ -74,9 +69,9 @@ $app->post('/playgrounds', function(Application $app, Request $request) use ($pl
         return $app->json(array('error' => 'Invalid JSON.'), 400);
     }
 
-    $playground = Playground::createFromArray($data, $config['image_base_url']);
+    $playground = Playground::createFromArray($data);
     if ($playground_mapper->insert($playground)) {
-        return $app->json($playground->toArray(), 201); // Should redirect to /playground/id instead?
+        return $app->json($playground->toArray($config['image_base_url']), 201); // Should redirect to /playground/id instead?
     } else {
         return $app->json(array('error' => $playground_mapper->getLastError()), 400);
     }
@@ -95,4 +90,4 @@ curl -H 'Content-Type: application/json' \
 // Route: PUT: /playground/:id
 // TODO
 
-$app->run();
+return $app;

@@ -1,5 +1,5 @@
 {
-    "hash": "30158cde865b51ce2f34f85b3d4844f9",
+    "hash": "c65641334b2064cfb9c37d1190552567",
     "packages": [
         {
             "name": "doctrine/common",
@@ -213,12 +213,12 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/fabpot/Silex.git",
-                "reference": "86b9a18de51e289d930cdce7f88a8aedb4053911"
+                "reference": "f7a8956f96e991f86a5fc4811876bef76e3a4e25"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/fabpot/Silex/archive/86b9a18de51e289d930cdce7f88a8aedb4053911.zip",
-                "reference": "86b9a18de51e289d930cdce7f88a8aedb4053911",
+                "url": "https://github.com/fabpot/Silex/archive/f7a8956f96e991f86a5fc4811876bef76e3a4e25.zip",
+                "reference": "f7a8956f96e991f86a5fc4811876bef76e3a4e25",
                 "shasum": ""
             },
             "require": {
@@ -230,7 +230,6 @@
                 "symfony/routing": ">=2.1,<2.3-dev"
             },
             "require-dev": {
-                "monolog/monolog": ">=1.0.0,<1.2-dev",
                 "twig/twig": ">=1.8.0,<2.0-dev",
                 "swiftmailer/swiftmailer": "4.2.*",
                 "doctrine/dbal": ">=2.2.0,<2.4.0-dev",
@@ -246,14 +245,16 @@
                 "symfony/translation": ">=2.1,<2.3-dev",
                 "symfony/twig-bridge": ">=2.1,<2.3-dev",
                 "symfony/validator": ">=2.1,<2.3-dev",
-                "symfony/serializer": ">=2.1,<2.3-dev"
+                "symfony/serializer": ">=2.1,<2.3-dev",
+                "symfony/dom-crawler": ">=2.1,<2.3-dev",
+                "symfony/options-resolver": ">=2.1,<2.3-dev"
             },
             "suggest": {
                 "symfony/browser-kit": ">=2.1,<2.3-dev",
                 "symfony/css-selector": ">=2.1,<2.3-dev",
                 "symfony/dom-crawler": ">=2.1,<2.3-dev"
             },
-            "time": "2013-01-19 14:44:48",
+            "time": "2013-01-24 12:18:41",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -293,12 +294,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/EventDispatcher",
-                "reference": "1ba2e333b644ac0a0e5ef751d514dd01b3a26e9d"
+                "reference": "v2.2.0-BETA2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/symfony/EventDispatcher/archive/1ba2e333b644ac0a0e5ef751d514dd01b3a26e9d.zip",
-                "reference": "1ba2e333b644ac0a0e5ef751d514dd01b3a26e9d",
+                "url": "https://github.com/symfony/EventDispatcher/archive/v2.2.0-BETA2.zip",
+                "reference": "v2.2.0-BETA2",
                 "shasum": ""
             },
             "require": {
@@ -347,18 +348,18 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/HttpFoundation",
-                "reference": "237e596d9dbeccd1f19e3b5ee06418c0e6000b21"
+                "reference": "v2.2.0-BETA2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/symfony/HttpFoundation/archive/237e596d9dbeccd1f19e3b5ee06418c0e6000b21.zip",
-                "reference": "237e596d9dbeccd1f19e3b5ee06418c0e6000b21",
+                "url": "https://github.com/symfony/HttpFoundation/archive/v2.2.0-BETA2.zip",
+                "reference": "v2.2.0-BETA2",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
-            "time": "2013-01-17 15:25:59",
+            "time": "2013-01-21 16:56:55",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -397,12 +398,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/HttpKernel",
-                "reference": "c5f232173a8f64d48117692eb029ef9e55e6d0f3"
+                "reference": "82fce0a7efbb692166ef98381646929cbed4ab73"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/symfony/HttpKernel/archive/c5f232173a8f64d48117692eb029ef9e55e6d0f3.zip",
-                "reference": "c5f232173a8f64d48117692eb029ef9e55e6d0f3",
+                "url": "https://github.com/symfony/HttpKernel/archive/82fce0a7efbb692166ef98381646929cbed4ab73.zip",
+                "reference": "82fce0a7efbb692166ef98381646929cbed4ab73",
                 "shasum": ""
             },
             "require": {
@@ -430,7 +431,7 @@
                 "symfony/dependency-injection": "2.2.*",
                 "symfony/finder": "2.2.*"
             },
-            "time": "2013-01-18 20:37:54",
+            "time": "2013-01-24 08:14:41",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -466,12 +467,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Routing",
-                "reference": "9ce05861fd9aa6cbb14759a78ab30d07afcf489f"
+                "reference": "v2.2.0-BETA2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/symfony/Routing/archive/9ce05861fd9aa6cbb14759a78ab30d07afcf489f.zip",
-                "reference": "9ce05861fd9aa6cbb14759a78ab30d07afcf489f",
+                "url": "https://github.com/symfony/Routing/archive/v2.2.0-BETA2.zip",
+                "reference": "v2.2.0-BETA2",
                 "shasum": ""
             },
             "require": {
@@ -489,7 +490,7 @@
                 "symfony/config": "2.2.*",
                 "symfony/yaml": "2.2.*"
             },
-            "time": "2013-01-17 15:25:59",
+            "time": "2013-01-21 16:57:32",
             "type": "library",
             "extra": {
                 "branch-alias": {
