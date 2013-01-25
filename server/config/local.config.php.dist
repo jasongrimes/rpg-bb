@@ -1,0 +1,66 @@
+<?php
+/**
+ * Template for local configuration that is different in different environments.
+ *
+ * Rename this file to local.config.php and add set the parameters to appropriate values.
+ *
+ * local.config.php should never be committed to version control.
+ */
+
+namespace Playground;
+
+function localConfig($env = 'prod')
+{
+    $config = array();
+
+    //
+    // Production environment
+    //
+    if ('prod' == $env) {
+        // Database connection config.
+        $config['db_master'] = array(
+            'dbname' => '',
+            'host' => '',
+            'user' => '',
+            'pass' => '',
+        );
+
+        // Image uploads.
+        $config['image_base_url'] = '';
+    }
+
+    //
+    // Development environment
+    //
+    if ('dev' == $env) {
+        // Database connection config.
+        $config['db_master'] = array(
+            'dbname' => '',
+            'host' => '',
+            'user' => '',
+            'pass' => '',
+        );
+
+        // Image uploads.
+        $config['image_base_url'] = '';
+    }
+
+    //
+    // Test environment
+    //
+    if ('test' == $env) {
+        // Database connection config.
+        $config['db_master'] = array(
+            'dbname' => '',
+            'host' => '',
+            'user' => '',
+            'pass' => '',
+        );
+
+        // Image uploads.
+        $config['image_base_url'] = '';
+    }
+
+    return $config;
+}
+return localConfig(ENV);
