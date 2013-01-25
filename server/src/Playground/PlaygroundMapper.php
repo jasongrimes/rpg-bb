@@ -12,6 +12,11 @@ class PlaygroundMapper
     /** @var Connection */
     protected $conn;
 
+    /**
+     * Constructor.
+     *
+     * @param \Doctrine\DBAL\Connection $conn
+     */
     public function __construct(Connection $conn)
     {
         $this->conn = $conn;
@@ -57,6 +62,8 @@ class PlaygroundMapper
     }
 
     /**
+     * Get playground data from the database for playgrounds that match the given criteria.
+     *
      * @param array $criteria
      * @return array
      */
@@ -93,27 +100,12 @@ class PlaygroundMapper
 
         $playgrounds_data = $this->conn->fetchAll($sql, $params);
 
-        /*
-        if (empty($playgrounds_data)) {
-            return array();
-        }
-
-        $playground_ids = array();
-        foreach ($playgrounds_data as $row) {
-            $playground_ids[] = $row['id'];
-        }
-
-        $img_data = $this->getPlaygroundImageData($playground_ids);
-
-        foreach ($playgrounds_data as &$playground_data) {
-            $playground_data['images'] = array_key_exists($playground_data['id'], $img_data) ? $img_data[$playground_data['id']] : array();
-        }
-        */
-
         return $playgrounds_data;
     }
 
     /**
+     * Get playground image data from the database for the given Playground IDs.
+     *
      * @param array $playground_ids
      * @return array
      */
@@ -133,6 +125,12 @@ class PlaygroundMapper
         return $data;
     }
 
+    /**
+     * Insert a Playground into the database.
+     *
+     * @param Playground $playground
+     * @return bool
+     */
     public function insert(Playground $playground)
     {
         $keys = array('name', 'address', 'lat', 'lng', 'ages', 'tot_swings', 'main_surface', 'restrooms', 'picnic_shelter');
@@ -154,6 +152,11 @@ class PlaygroundMapper
         return true; // TODO: Should do validation, and return false if it fails.
     }
 
+    /**
+     * Insert a PlaygroundImage into the database.
+     *
+     * @param PlaygroundImage $image
+     */
     protected function insertImage(PlaygroundImage $image)
     {
         $keys = array('id', 'filename', 'title', 'credit', 'sortorder', 'playground_id');
@@ -170,6 +173,11 @@ class PlaygroundMapper
         $image->id = $this->conn->lastInsertId();
     }
 
+    /**
+     * Delete a Playground from the database.
+     *
+     * @param Playground $playground
+     */
     public function delete(Playground $playground)
     {
         foreach ($playground->getImages() as $image) {
@@ -178,6 +186,11 @@ class PlaygroundMapper
         $this->conn->executeUpdate('DELETE FROM playground WHERE id = ?', array($playground->id));
     }
 
+    /**
+     * Delete a PlaygroundImage from the database.
+     *
+     * @param PlaygroundImage $image
+     */
     protected function deleteImage(PlaygroundImage $image)
     {
         $this->conn->executeUpdate('DELETE FROM playground_image WHERE id = ?', array($image->id));

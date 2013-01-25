@@ -2,6 +2,9 @@
 
 namespace Playground;
 
+/**
+ * An image of a playground.
+ */
 class PlaygroundImage
 {
     /** @var Playground */
@@ -13,11 +16,23 @@ class PlaygroundImage
     public $credit = '';
     public $sortorder = 0;
 
+    /**
+     * Constructor.
+     *
+     * @param Playground $playground The Playground with which this image is associated.
+     */
     public function __construct(Playground $playground)
     {
         $this->playground = $playground;
     }
 
+    /**
+     * Factory method for creating a PlaygroundImage.
+     *
+     * @param Playground $playground
+     * @param array $data
+     * @return PlaygroundImage
+     */
     public static function createFromArray(Playground $playground, array $data)
     {
         $image = new self($playground);
@@ -31,6 +46,12 @@ class PlaygroundImage
         return $image;
     }
 
+    /**
+     * Get an associative array representation of the PlaygroundImage.
+     *
+     * @param string $base_url Optional. The base URL for playground images.
+     * @return array
+     */
     public function toArray($base_url = '')
     {
         $data = get_object_vars($this);
@@ -41,6 +62,12 @@ class PlaygroundImage
         return $data;
     }
 
+    /**
+     * Get a URL for the playground image.
+     *
+     * @param string $img_base_url
+     * @return null|string
+     */
     public function getUrl($img_base_url = '')
     {
         if (!$this->filename) {
@@ -51,6 +78,8 @@ class PlaygroundImage
     }
 
     /**
+     * Get the Playground with which this image is associated.
+     *
      * @return Playground
      */
     public function getPlayground()

@@ -2,6 +2,9 @@
 
 namespace Playground;
 
+/**
+ * A playground.
+ */
 class Playground
 {
     public $id;
@@ -20,6 +23,12 @@ class Playground
 
     public $meta;
 
+    /**
+     * Factory method for creating a Playground instance from an array of data.
+     *
+     * @param array $data
+     * @return Playground
+     */
     public static function createFromArray(array $data)
     {
         $playground = new self();
@@ -35,6 +44,12 @@ class Playground
         return $playground;
     }
 
+    /**
+     * Add an image to the Playground.
+     *
+     * @param array $data
+     * @return PlaygroundImage
+     */
     public function addImage(array $data)
     {
         $image = PlaygroundImage::createFromArray($this, $data);
@@ -45,6 +60,8 @@ class Playground
     }
 
     /**
+     * Get a list of images of this playground.
+     *
      * @return PlaygroundImage[]
      */
     public function getImages()
@@ -52,6 +69,12 @@ class Playground
         return $this->images;
     }
 
+    /**
+     * Get an associative array representation of the Playground.
+     *
+     * @param string $img_base_url Optional. The base URL for playground images.
+     * @return array
+     */
     public function toArray($img_base_url = '')
     {
         $data = get_object_vars($this);

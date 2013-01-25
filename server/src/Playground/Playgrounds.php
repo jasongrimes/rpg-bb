@@ -4,6 +4,9 @@ namespace Playground;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
+/**
+ * A collection of Playground instances.
+ */
 class Playgrounds extends ArrayCollection
 {
     /**
