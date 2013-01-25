@@ -9,58 +9,62 @@
 
 namespace Playground;
 
-function localConfig($env = 'prod')
-{
-    $config = array();
+if (!function_exists('Playground\localConfig')) {
 
-    //
-    // Production environment
-    //
-    if ('prod' == $env) {
-        // Database connection config.
-        $config['db_master'] = array(
-            'dbname' => '',
-            'host' => '',
-            'user' => '',
-            'pass' => '',
-        );
+    function localConfig($env = 'prod')
+    {
+        $config = array();
 
-        // Image uploads.
-        $config['image_base_url'] = '';
+        //
+        // Production environment
+        //
+        if ('prod' == $env) {
+            // Database connection config.
+            $config['db_master'] = array(
+                'dbname' => '',
+                'host' => '',
+                'user' => '',
+                'pass' => '',
+            );
+
+            // Image uploads.
+            $config['image_base_url'] = '';
+        }
+
+        //
+        // Development environment
+        //
+        if ('dev' == $env) {
+            // Database connection config.
+            $config['db_master'] = array(
+                'dbname' => '',
+                'host' => '',
+                'user' => '',
+                'pass' => '',
+            );
+
+            // Image uploads.
+            $config['image_base_url'] = '';
+        }
+
+        //
+        // Test environment
+        //
+        if ('test' == $env) {
+            // Database connection config.
+            $config['db_master'] = array(
+                'dbname' => '',
+                'host' => '',
+                'user' => '',
+                'pass' => '',
+            );
+
+            // Image uploads.
+            $config['image_base_url'] = '';
+        }
+
+        return $config;
     }
-
-    //
-    // Development environment
-    //
-    if ('dev' == $env) {
-        // Database connection config.
-        $config['db_master'] = array(
-            'dbname' => '',
-            'host' => '',
-            'user' => '',
-            'pass' => '',
-        );
-
-        // Image uploads.
-        $config['image_base_url'] = '';
-    }
-
-    //
-    // Test environment
-    //
-    if ('test' == $env) {
-        // Database connection config.
-        $config['db_master'] = array(
-            'dbname' => '',
-            'host' => '',
-            'user' => '',
-            'pass' => '',
-        );
-
-        // Image uploads.
-        $config['image_base_url'] = '';
-    }
-
-    return $config;
 }
+
 return localConfig(ENV);
