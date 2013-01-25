@@ -27,10 +27,8 @@ class PlaygroundMapperTest extends WebTestCase
     {
         $playground = Playground::createFromArray(array(
             'name' => 'Test playground',
-            'images' => array(
-                array('filename' => 'dummy.png'),
-            ),
         ));
+        $playground->addImage(array('filename' => 'dummy.png'));
         $this->mapper->insert($playground);
 
         $new_playground = $this->mapper->getPlayground($playground->id);
