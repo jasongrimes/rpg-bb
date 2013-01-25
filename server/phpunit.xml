@@ -17,7 +17,7 @@
     </testsuites>
 
     <php>
-        <server name="APP_DIR" value="/var/www/silexsandbox/app" />
+        <server name="APP_DIR" value="./" />
         <env name="env" value="test" />
     </php>
 </phpunit>

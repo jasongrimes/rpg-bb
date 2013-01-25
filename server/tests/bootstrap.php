@@ -2,4 +2,4 @@
 
 $loader = require_once __DIR__ . '/../bootstrap.php';
 
-$loader->add('Playground\Tests', __DIR__);
+$loader->add('Playground\Test', __DIR__);

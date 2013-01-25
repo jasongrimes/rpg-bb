@@ -1,8 +1,7 @@
 <?php
 
-namespace Playground\Tests;
+namespace Playground\Test;
 
-use Silex\WebTestCase;
 use Playground\PlaygroundMapper;
 use Playground\Playground;
 
@@ -10,11 +9,6 @@ class PlaygroundMapperTest extends WebTestCase
 {
     /** @var PlaygroundMapper */
     protected $mapper;
-
-    public function createApplication()
-    {
-        return require __DIR__ . '/../../app.php';
-    }
 
     public function setUp()
     {
