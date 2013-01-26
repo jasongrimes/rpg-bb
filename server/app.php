@@ -39,7 +39,7 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
         'password' => $config['db_master']['pass'],
     ),
 ));
-$playground_mapper = new PlaygroundMapper($app['db']);
+$app['playground_mapper'] = new PlaygroundMapper($app['db']);
 
 // -----------------------------------
 // Routes and controllers
@@ -51,29 +51,29 @@ $app->get('/', function(Application $app) {
 });
 
 // Route: GET: /playgrounds
-$app->get('/playgrounds', function(Application $app, Request $request) use ($playground_mapper, $config) {
-    $playgrounds = $playground_mapper->getPlaygrounds($request->query->all());
+$app->get('/playgrounds', function(Application $app, Request $request) use ($config) {
+    $playgrounds = $app['playground_mapper']->getPlaygrounds($request->query->all());
     return $app->json($playgrounds->toArray($config['image_base_url']));
 });
 
 // Route: GET: /playground/:id
-$app->get('/playground/{id}', function(Application $app, $id) use ($playground_mapper, $config) {
-    $playground = $playground_mapper->getPlayground($id);
+$app->get('/playground/{id}', function(Application $app, $id) use ($config) {
+    $playground = $app['playground_mapper']->getPlayground($id);
     return $app->json($playground->toArray($config['image_base_url']));
 });
 
 // Route: POST: /playgrounds
-$app->post('/playgrounds', function(Application $app, Request $request) use ($playground_mapper, $config) {
+$app->post('/playgrounds', function(Application $app, Request $request) use ($config) {
     $data = json_decode($request->getContent(), true);
     if (!$data) {
         return $app->json(array('error' => 'Invalid JSON.'), 400);
     }
 
     $playground = Playground::createFromArray($data);
-    if ($playground_mapper->insert($playground)) {
+    if ($app['playground_mapper']->insert($playground)) {
         return $app->json($playground->toArray($config['image_base_url']), 201); // Should redirect to /playground/id instead?
     } else {
-        return $app->json(array('error' => $playground_mapper->getLastError()), 400);
+        return $app->json(array('error' => $app['playground_mapper']->getLastError()), 400);
     }
 });
 /*
@@ -88,6 +88,20 @@ curl -H 'Content-Type: application/json' \
  */
 
 // Route: PUT: /playground/:id
-// TODO
+$app->put('/playground/{id}', function(Application $app, Request $request, $id) use ($config) {
+    $data = json_decode($request->getContent(), true);
+    if (!$data) {
+        return $app->json(array('error' => 'Invalid JSON.'), 400);
+    }
+
+    $playground = Playground::createFromArray($data);
+    $playground->id = $id;
+
+    if ($app['playground_mapper']->update($playground)) {
+        return $app->json($playground->toArray($config['image_base_url']), 200); // Should redirect to /playground/id instead?
+    } else {
+        return $app->json(array('error' => $app['playground_mapper']->getLastError()), 400);
+    }
+});
 
 return $app;
