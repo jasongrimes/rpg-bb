@@ -41,7 +41,6 @@ class PlaygroundMapper
      */
     public function getPlaygrounds($criteria = array())
     {
-        /** @var Playground[] $playgrounds */
         $playgrounds = new Playgrounds();
 
         $pg_data = $this->getPlaygroundsData($criteria);
@@ -125,6 +124,22 @@ class PlaygroundMapper
         return $data;
     }
 
+    public function getSavePlaygroundSql(Playground $playground)
+    {
+        $keys = array('name', 'address', 'lat', 'lng', 'ages', 'tot_swings', 'main_surface', 'restrooms', 'picnic_shelter');
+
+        $params = array();
+        $sql = ' playground ';
+        foreach ($keys as $key) {
+            $sql .= empty($params) ? 'SET ' : ', ';
+            $sql .= $key . ' = :' . $key . ' ';
+            $params[$key] = $playground->$key;
+        }
+        // For UPDATEs, append WHERE id = :id, and add the id to the params.
+
+        return array($sql, $params);
+    }
+
     /**
      * Insert a Playground into the database.
      *
@@ -133,13 +148,9 @@ class PlaygroundMapper
      */
     public function insert(Playground $playground)
     {
-        $keys = array('name', 'address', 'lat', 'lng', 'ages', 'tot_swings', 'main_surface', 'restrooms', 'picnic_shelter');
+        list($common_sql, $params) = $this->getSavePlaygroundSql($playground);
 
-        $sql = 'INSERT INTO playground ';
-        $sql .= '(' . implode(', ', $keys) . ') ';
-        $sql .= 'VALUES (:' . implode(', :', $keys) . ') ';
-
-        $params = array_intersect_key($playground->toArray(), array_flip($keys));
+        $sql = 'INSERT INTO ' . $common_sql;
 
         $this->conn->executeUpdate($sql, $params);
 
@@ -171,6 +182,26 @@ class PlaygroundMapper
         $this->conn->executeUpdate($sql, $params);
 
         $image->id = $this->conn->lastInsertId();
+    }
+
+    /**
+     * Update a Playground instance in the database.
+     *
+     * @param Playground $playground
+     * @return bool
+     */
+    public function update(Playground $playground)
+    {
+        // TODO: Determine image updates. Or, require them to be updated specifically, using updateImage(), deleteImage, etc.?
+
+        list($common_sql, $params) = $this->getSavePlaygroundSql($playground);
+
+        $sql = 'UPDATE ' . $common_sql . ' WHERE id = :id ';
+        $params['id'] = $playground->id;
+
+        $this->conn->executeUpdate($sql, $params);
+
+        return true;
     }
 
     /**
