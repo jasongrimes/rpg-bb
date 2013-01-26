@@ -3,6 +3,10 @@
         "silex/silex": "1.0.*",
         "doctrine/dbal": "2.2.*"
     },
+    "require-dev": {
+        "symfony/browser-kit": ">=2.1,<2.3-dev",
+        "phpunit/phpunit": "3.7.*"
+    },
     "minimum-stability": "dev",
     "autoload": {
         "psr-0": {
