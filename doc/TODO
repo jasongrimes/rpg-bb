@@ -6,9 +6,3 @@ Update Chef config
 * Update local config file
 * Add environment variable "env" to apache config:   SetEnv env dev
 * Add test environment: db and credentials, apache env, local config
-
-PHPUnit
--------
-* Install from Composer?
-* Add as external library to PHPStorm
-
