@@ -10,12 +10,10 @@ use Playground\Playground;
 
 $app = new Application();
 
-if (!defined('ENV')) {
-    define('ENV', getenv('env') ?: 'prod');
-}
+if (!defined('ENV')) define('ENV', getenv('env') ?: 'prod');
 
 if (ENV == 'dev') {
-    $app['debug'] = (ENV == 'dev');
+    $app['debug'] = true;
     ini_set('html_errors', 0);
     xdebug_disable();
 }
