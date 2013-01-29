@@ -1,8 +1,16 @@
-
 Playground site TODOs
+=====================
+
+* Streamline mapping.
+* Pull controllers into separate class.
+* See example at https://github.com/yohang/silex-backbone-todolist/blob/master/src/app.php
+
+Set up Assetic? Or maybe use grunt-bbb instead.
 
 Update Chef config
 ------------------
 * Update local config file
 * Add environment variable "env" to apache config:   SetEnv env dev
 * Add test environment: db and credentials, apache env, local config
+
+
