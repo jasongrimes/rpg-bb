@@ -48,19 +48,19 @@ $app->get('/', function(Application $app) {
     return new Response('Hello.');
 });
 
-// Route: GET: /playgrounds
+// Route: GET /playgrounds
 $app->get('/playgrounds', function(Application $app, Request $request) use ($config) {
     $playgrounds = $app['playground_mapper']->getPlaygrounds($request->query->all());
     return $app->json($playgrounds->toArray($config['image_base_url']));
 });
 
-// Route: GET: /playground/:id
-$app->get('/playground/{id}', function(Application $app, $id) use ($config) {
+// Route: GET /playgrounds/:id
+$app->get('/playgrounds/{id}', function(Application $app, $id) use ($config) {
     $playground = $app['playground_mapper']->getPlayground($id);
     return $app->json($playground->toArray($config['image_base_url']));
 });
 
-// Route: POST: /playgrounds
+// Route: POST /playgrounds
 $app->post('/playgrounds', function(Application $app, Request $request) use ($config) {
     $data = json_decode($request->getContent(), true);
     if (!$data) {
@@ -85,8 +85,8 @@ curl -H 'Content-Type: application/json' \
     http://rpg-bb.dev:8080/playgrounds
  */
 
-// Route: PUT: /playground/:id
-$app->put('/playground/{id}', function(Application $app, Request $request, $id) use ($config) {
+// Route: PUT /playgrounds/:id
+$app->put('/playgrounds/{id}', function(Application $app, Request $request, $id) use ($config) {
     $data = json_decode($request->getContent(), true);
     if (!$data) {
         return $app->json(array('error' => 'Invalid JSON.'), 400);
@@ -100,6 +100,14 @@ $app->put('/playground/{id}', function(Application $app, Request $request, $id) 
     } else {
         return $app->json(array('error' => $app['playground_mapper']->getLastError()), 400);
     }
+});
+
+// Route: DELETE /playgrounds/:id
+$app->delete('/playgrounds/{id}', function(Application $app, Request $request, $id) {
+    $playground = $app['playground_mapper']->getPlayground($id);
+    $app['playground_mapper']->delete($playground);
+    return new Response('', 204);
+
 });
 
 return $app;
