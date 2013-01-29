@@ -47,7 +47,7 @@ class ControllerTest extends WebTestCase
         // Update it via the REST URI.
         $new_name = 'New test';
         $data = array('name' => $new_name);
-        $uri = '/playground/'. $playground->id;
+        $uri = '/playgrounds/'. $playground->id;
 
         $client = $this->createClient();
         $client->request('PUT', $uri, array(), array(), array(), json_encode($data));
