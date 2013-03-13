@@ -1,0 +1,135 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <title>Raleigh Playgrounds</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+        <!--link href="css/bootstrap-responsive.css" rel="stylesheet"-->
+        <link rel="stylesheet" href="css/styles.css" />
+        <link href="/img/favicon.ico" rel="shortcut icon" type="image/vnd.microsoft.icon" >
+    </head>
+
+    <body>
+        <div id="header"></div>
+        <div id="content"></div>
+
+        <!--
+        <div id="header"></div>
+        <div id="sidebar"></div>
+        <div id="main"></div>
+        -->
+
+        <!--
+        <div id="search-list">
+            <div id="search-form"></div>
+            <ul id="playground-list" class="playground-list"></ul>
+        </div>
+        <div id="selected-playground-item"></div>
+        <div id="map-canvas"></div>
+        <div id="playground-details"></div>
+        -->
+
+        <!-- Templates -->
+        <script type="text/template" id="tpl-header">
+            <div class="navbar navbar-inverse">
+                <div class="navbar-inner">
+                    <div id="back-btn" class="btn btn-inverse view-nav-btn">
+                        <i class="icon-chevron-left icon-white"></i>
+                        Back
+                    </div>
+                    <div id="header-title" class="title">
+                        <a href="/"><img src="img/playground-icon-white-25x25.png" border="0"/></a>
+                        Raleigh Playgrounds
+                    </div>
+                    <!--
+                    <ul class="nav">
+                        <li id="menu-item-map"><a href="/#">Search</a></li>
+                        <li id="menu-item-new"><a href="/#playgrounds/new">Add playground</li>
+                    </ul>
+                    -->
+                    <div id="show-list-btn" class="btn btn-inverse view-nav-btn">
+                        <i class="icon-th-list icon-white"></i>
+                        List
+                    </div>
+                    <div id="show-map-btn" class="btn btn-inverse view-nav-btn">
+                        <i class="icon-map-marker icon-white"></i>
+                        Map
+                    </div>
+                </div>
+            </div>
+        </script>
+
+        <script type="text/template" id="tpl-search-form">
+            <!--
+            <form class="form-inline" style="display: inline;">
+                Near <a href="#">current location</a>
+                <input type="button" id="search-btn" value="Search" class="btn">
+            </form>
+            -->
+            <div class="search-field" style="padding: 3px; display: none;">
+                <div class="icon-search"></div>
+                <input type="text" class="search-query" placeholder="Filter playgrounds..."/>
+                <div class="icon-chevron-down toggle-search-options"></div>
+            </div>
+        </script>
+
+        <script type="text/template" id="tpl-playground-list-item">
+            <div class="media" style="position: relative;">
+                <img class="media-object pull-left" src="<%= _.first(images).url %>" style="width: 50px; height: 50px;">
+                <div class="media-body">
+                   <strong><%= name %></strong><br>
+                    <%= address.replace(/,.*/g, '') %>
+                    <% if (meta && meta.distance > 0) { %>
+                        <br/>
+                        <i><%= parseFloat(meta.distance).toFixed(1) %> miles</i>
+                    <% } %>
+                    <div class="list-item-buttons">
+                        <a class="view-details-btn" href="#playground/<%= id %>" title="View details"><i class="icon-file"></i></a>
+                        <a class="view-on-map-btn" href="#" title="View on map"><i class="icon-map-marker"></i></a>
+                    </div>
+                </div>
+            </div>
+        </script>
+
+        <script type="text/template" id="tpl-playground-info-popup">
+            <div class="media">
+                <img class="media-object pull-left" src="<%= _.first(images).url %>" style="width: 50px; height: 50px;">
+                <div class="media-body">
+                    <strong><%= name %></strong><br>
+                    <%= address.replace(/,.*/g, '') %>
+                    <% if (meta && meta.distance > 0) { %>
+                        <br/>
+                        <i><%= parseFloat(meta.distance).toFixed(1) %> miles</i>
+                    <% } %>
+                    <div style="float: right; display: inline-block;"><a href='#playground/<%= id %>'>Details</a></div>
+                </div>
+            </div>
+        </script>
+        <script type="text/template" id="tpl-playground-details">
+            <h3><%= name %></h3>
+            <p><%= address %></p>
+            <ul class="playground-images"></ul>
+        </script>
+
+        <script type="text/template" id="tpl-playground-image">
+            <div class="thumbnail">
+                <img src="<%= url %>"/>
+                <div><%= title %></div>
+                <%if (credit) { %>
+                    <small class="muted">Credit: <%= credit %></small>
+                <% } %>
+            </div>
+        </script>
+
+        <!-- JavaScript -->
+        <script src="js/lib/jquery.min.js"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?sensor=true"></script>
+        <script src="js/lib/underscore.js"></script>
+        <script src="js/lib/backbone.js"></script>
+        <script src="js/lib/bootstrap.min.js"></script>
+        <script src="js/lib/jquery.scrollTo.min.js"></script>
+        <script src="initial-data.js.php"></script>
+        <script src="js/app.js"></script>
+
+    </body>
+</html>
