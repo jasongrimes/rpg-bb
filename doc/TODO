@@ -1,6 +1,42 @@
 Playground site TODOs
 =====================
 
+Client
+------
+
+* Do something with the header title / back button
+* Padding on the details page
+
+* Make search work
+
+* Show full search options on initial page load. Collapse when showing search results.
+* Add search options. Indoor/outdoor, food onsite, basketball hoops, search by name (with typeahead?), ...
+* Maybe do it all with tags? Then use a single search field, allowing to search by name or tag.
+* Default to "near you". Allow to edit location and radius, or disable it.
+* Have a show all option.
+* Add a "search" button (magnifying glass icon) next to list/map. Make it open the search-list panel, with search form expanded.
+  In onecol layout, hide the list when the search form is expanded?
+* Refactor the search code. Make search form fire an event that the map view listens on to pin the source position.
+
+
+* Allow to view original size image
+
+* Make URL navigation and forward/back work well.
+* SEO: slug urls and hashbang stuff for individual playgrounds.
+
+* Add support for comments/ratings
+* Allow to add/edit playgrounds
+* Allow to upload images. How to integrate w/iPhone?
+
+* Integrate with Facebook
+** Like a playground
+** Crosspost comments/ratings to timeline
+** Login w/Facebook account
+** Import friends list
+
+Server
+------
+
 * Streamline mapping.
 * Pull controllers into separate class.
 * See example at https://github.com/yohang/silex-backbone-todolist/blob/master/src/app.php
