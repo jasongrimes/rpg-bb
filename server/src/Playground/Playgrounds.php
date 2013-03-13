@@ -14,11 +14,11 @@ class Playgrounds extends ArrayCollection
      *
      * @return array
      */
-    public function toArray($img_base_url = '')
+    public function toArray()
     {
         $arr = array();
         foreach ($this->toPlaygroundArray() as $playground) {
-            $arr[] = $playground->toArray($img_base_url);
+            $arr[] = $playground->toArray();
         }
 
         return $arr;

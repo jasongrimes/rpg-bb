@@ -70,7 +70,12 @@ class PlaygroundMapper
     {
         $params = array();
 
-        $is_geo_search = (array_key_exists('lat', $criteria) && array_key_exists('lng', $criteria) && array_key_exists('radius', $criteria));
+        $is_geo_search = (array_key_exists('lat', $criteria) && array_key_exists('lng', $criteria));
+        /*
+        if ($is_geo_search && !array_key_exists('radius', $criteria)) {
+            $criteria['radius'] = 100;
+        }
+        */
 
         $sql = 'SELECT * ';
 
@@ -91,10 +96,12 @@ class PlaygroundMapper
         }
 
         if ($is_geo_search) {
-            $sql .= 'GROUP BY id '; // TODO: Is this needed?
-            $sql .= 'HAVING distance < :radius ';
+            $sql .= 'GROUP BY id '; // TODO: Is this needed anymore?
+            if (array_key_exists('radius', $criteria)) {
+                $sql .= 'HAVING distance < :radius ';
+                $params['radius'] = $criteria['radius'];
+            }
             $sql .= 'ORDER BY distance ';
-            $params['radius'] = $criteria['radius'];
         }
 
         $playgrounds_data = $this->conn->fetchAll($sql, $params);
@@ -110,10 +117,14 @@ class PlaygroundMapper
      */
     protected function getPlaygroundImageData(array $playground_ids)
     {
+        if (empty($playground_ids)) {
+            return array();
+        }
+
         $data = array();
 
         $sql = 'SELECT * FROM playground_image ';
-        $sql .= 'WHERE playground_id IN (' . implode(', ', $playground_ids) . ')';
+        $sql .= 'WHERE playground_id IN (' . implode(', ', $playground_ids) . ') ';
         $sql .= 'ORDER BY sortorder ';
 
         $rows = $this->conn->fetchAll($sql);

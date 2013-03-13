@@ -21,7 +21,7 @@ class Playground
     /** @var PlaygroundImage[] */
     protected $images = array();
 
-    public $meta;
+    public $meta = array();
 
     /**
      * Factory method for creating a Playground instance from an array of data.
@@ -50,9 +50,12 @@ class Playground
      * @param array $data
      * @return PlaygroundImage
      */
-    public function addImage(array $data)
+    public function addImage(array $data, $base_url = '')
     {
         $image = PlaygroundImage::createFromArray($this, $data);
+        if ($base_url) {
+            $image->setBaseUrl($base_url);
+        }
         $image->sortorder = count($this->images) + 1;
         $this->images[] = $image;
 
@@ -72,16 +75,15 @@ class Playground
     /**
      * Get an associative array representation of the Playground.
      *
-     * @param string $img_base_url Optional. The base URL for playground images.
      * @return array
      */
-    public function toArray($img_base_url = '')
+    public function toArray()
     {
         $data = get_object_vars($this);
 
         $data['images'] = array();
         foreach ($this->images as $image) {
-            $data['images'][] = $image->toArray($img_base_url);
+            $data['images'][] = $image->toArray();
         }
 
         return $data;
