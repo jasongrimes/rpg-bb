@@ -1,6 +1,8 @@
 server/vendor/*
 *.swp
 .idea/*
+.DS_Store
+web/other/*
 
 # Configuration files
 local.config.php
