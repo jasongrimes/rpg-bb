@@ -41,37 +41,9 @@ input[type=text] {
     float: right;
 }
 #back-btn {
-    float: left;
+    float: right;
 }
 
-/*
-#show-map-btn, #show-list-btn, #back-btn {
-    display:none;
-}
-#back-btn {
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    margin: 0px;
-}
-#show-map-btn, #show-list-btn {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    margin: 0px;
-}
-#show-search-btn {
-    margin-top: 0px;
-    padding: 2px 5px;
-}
-*/
-
-/*
-#sidebar {
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
-}
-*/
 /* Search/list panel */
 #search-list {
     overflow: auto;
