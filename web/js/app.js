@@ -27,6 +27,7 @@ app.Playgrounds = Backbone.Collection.extend({
 });
 
 // Views -----------------------------------
+
 Backbone.View.prototype.close = function () {
     if (this.beforeClose) {
         this.beforeClose();
