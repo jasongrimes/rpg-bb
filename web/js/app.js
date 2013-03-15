@@ -35,32 +35,6 @@ Backbone.View.prototype.close = function () {
     this.unbind();
 };
 
-// Only issue an update layout event when the layout actually changes.
-// Views should listen to that to set their layout.
-// Views should separately listen to resize to set their heights.
-// All other changes (ex. which navigation to show) should be handled explicitly, not bundled together in an updateLayout callback.
-//
-// Listen for the "change" event to be notified when the layout changes.
-// Listen for the "update" event to be notified every time the window is resized.
-// Both events pass the current layout as an argument.
-/*
-app.layout = {
-    currentLayout: null, // compact or full
-    currentView: null,
-
-    update: function () {
-        var prevLayout = this.currentLayout;
-        this.currentLayout = $(window).width() <= 768 ? 'compact' : 'full';
-        if (this.currentLayout != prevLayout) {
-            this.trigger('change', this.currentLayout);
-        }
-        this.trigger('update', this.currentLayout);
-    }
-};
-_.extend(app.layout, Backbone.Events);
-$(window).resize(function () { app.layout.update(); });
-*/
-
 // Handle view transitions and maintain view state across instances.
 app.ViewManager = function () {
     _.extend(this, Backbone.Events);
@@ -113,55 +87,6 @@ app.ViewManager = function () {
 
     };
 };
-/*
-app.ViewManager = function () {
-    this.onResize = function () {};
-
-    self = this;
-    $(window).resize(function () { self.onResize(); })
-};
-_.extend(app.ViewManager, Backbone.Events, {
-    currentLayout: null, // 'compact' or 'full'
-    currentView: null, // The current view object shown by showView()
-    compactFindView: null, // 'list' or 'map'
-
-    onResize: function () {
-        this.determineLayout();
-    },
-
-    determineLayout: function () {
-        var prevLayout = this.currentLayout;
-        this.currentLayout = $(window).width() <= 768 ? 'compact' : 'full';
-
-        if (this.currentLayout != prevLayout) {
-            this.trigger('changeLayout', this.currentLayout);
-        }
-    },
-
-    showView: function (view, selector) {
-        if (this.currentView) this.currentView.close();
-        this.currentView = view;
-
-        if (selector) {
-            $(selector).html(view.render().el);
-        } else {
-            view.render();
-        }
-    },
-
-    setCompactFindView: function (viewName) {
-        if (viewName != 'map' && viewName != 'list') throw new Error("Attempted to set invalid value for find compact view.");
-
-        this.compactFindView = viewName;
-        if (this.currentView.viewName == 'find') {
-            this.currentView.setCompactView(viewName);
-        }
-
-    }
-});
-*/
-// _.extend(app.viewman, Backbone.Events);
-
 
 app.HeaderView = Backbone.View.extend({
     template: _.template($('#tpl-header').html()),
@@ -221,7 +146,6 @@ app.FindView = Backbone.View.extend({
         this.onAttachedToDomListeners = [];
     },
 
-
     render: function () {
         this.$searchlist = $('<div/>', {id: 'search-list'});
         this.$searchlist.append(this.searchFormView.render().el);
@@ -237,12 +161,10 @@ app.FindView = Backbone.View.extend({
 
     whenAttachedToDom: function (callback) {
         if (jQuery.contains(document.documentElement, this.el)) {
-            console.log('I think I\'m already attached to the DOM. Executing callback now.');
             // If the element is already attached to the DOM, execute the callback now.
             callback();
         } else {
             // Otherwise, queue it up for after the view manager attaches the element to the DOM.
-            console.log('Queuing callback to be invoked after I\'m attached to the DOM.');
             this.onAttachedToDomListeners.push(callback);
         }
     },
@@ -287,6 +209,7 @@ app.FindView = Backbone.View.extend({
         this.mapView.$el.hide();
         $('#show-list-btn').hide();
         $('#show-map-btn').show();
+        this.listView.setButtonVisibility();
 
         var self = this;
         this.whenAttachedToDom(function () {
@@ -308,7 +231,9 @@ app.FindView = Backbone.View.extend({
     },
 
     clickListBtn: function () {
+        console.log('clickListBtn');
         app.viewman.compactFindView = 'list';
+        console.log(app.viewman.compactFindView);
         this.updateCompactView();
     },
 
@@ -379,33 +304,6 @@ app.SearchFormView = Backbone.View.extend({
             this.geolocateError(-1);
         }
     },
-
-    /*
-    searchPlaygrounds: function (data) {
-        var self = this;
-        this.requestData = data;
-
-        new google.maps.Marker({
-            position: new google.maps.LatLng(data.lat, data.lng),
-            map: app.mapView.map,
-            icon: 'img/blue-measle-halo.png',
-            zIndex: 0,
-            title: 'Current location'
-        });
-
-        app.mapView.recenterMap();
-
-        app.playgrounds.fetch({
-            data: data,
-            update: true,
-            success: function () {
-                self.playgroundListView = new app.ListView({model: app.playgrounds});
-                $('#playground-list').html(self.playgroundListView.render().el);
-                $('#selected-playground-item').html('');
-            }
-        });
-    },
-    */
 
     searchNearGeocodedPosition: function (position) {
         var coords = position.coords || position.coordinate || position;
@@ -566,24 +464,6 @@ app.MapView = Backbone.View.extend({
             this.$mapInfoPanel.show();
             this.resizeMap();
         }
-
-        /*
-        if (app.layout == 'twocol') {
-            // Show the info popup in the two-column layout.
-            if (this.infowindow) this.infowindow.close();
-            this.infowindow = new google.maps.InfoWindow({
-                content: this.infoTemplate(playground.toJSON())
-            });
-            this.infowindow.open(this.map, marker);
-        } else {
-            // Show the info above the map in the one-column layout.
-            app.selectedPlaygroundItemView = new app.SelectedPlaygroundItemView({
-                model: playground
-            });
-            $('#selected-playground-item').show();
-            app.router.adjustLayout();
-        }
-        */
     },
 
     resizeMap: function () {
@@ -705,6 +585,10 @@ app.ListView = Backbone.View.extend({
     },
 
     updateLayout: function () {
+        this.setButtonVisibility();
+    },
+
+    setButtonVisibility: function () {
         // Set visibility of buttons depending on the current layout.
         if (app.viewman.currentLayout == 'full') {
             this.$el.find('.view-on-map-btn').hide();
@@ -714,20 +598,6 @@ app.ListView = Backbone.View.extend({
             this.$el.find('.view-details-btn').hide();
         }
     }
-
-    /*
-    updateLayout: function () {
-        var layout = app.viewman.currentLayout;
-
-        if (layout == 'full') {
-            $('.view-on-map-btn').hide();
-            $('.view-details-btn').show();
-        } else if (app.viewman.compactFindView == 'list') {
-            $('.view-on-map-btn').show();
-            $('.view-details-btn').hide();
-        }
-    }
-    */
 });
 
 app.PlaygroundListItemView = Backbone.View.extend({
@@ -742,8 +612,8 @@ app.PlaygroundListItemView = Backbone.View.extend({
     },
 
     initialize: function () {
-        this.model.bind("change", this.render, this);
-        this.model.bind("destroy", this.close, this);
+        this.listenTo(this.model, 'change', this.render);
+        this.listenTo(this.model, 'destroy', this.close);
     },
 
     events: {
@@ -771,20 +641,6 @@ app.PlaygroundListItemView = Backbone.View.extend({
     select: function () {
         app.playgrounds.setSelected(this.model);
 
-        /*
-        if (app.layout == 'twocol' && app.mainPanelMode == 'map') {
-            app.router.navigate('playground/'+this.model.id+'/map', {trigger: true});
-        } else {
-            app.router.navigate('playground/'+this.model.id, {trigger: true});
-        }
-        */
-        /*
-        if (app.getActiveView == 'map') {
-            app.router.navigate('playground/'+this.model.id+'/map', {trigger: true});
-        } else {
-            app.router.navigate('playground/'+this.model.id, {trigger: true});
-        }
-        */
         if (app.viewman.currentLayout == 'compact') {
             app.router.navigate('playground/'+this.model.id, {trigger: true});
         }
