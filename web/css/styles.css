@@ -112,7 +112,7 @@ ul.playground-list {
     max-width: none;
 }
 /* Details panel */
-#playground-details {
+.playground-details {
     padding: 0px 10px;
     /*
     overflow: auto;

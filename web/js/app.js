@@ -650,6 +650,8 @@ app.PlaygroundListItemView = Backbone.View.extend({
 app.PlaygroundDetailsView = Backbone.View.extend({
     viewName: 'details',
 
+    className: 'playground-details',
+
     template: _.template($('#tpl-playground-details').html()),
 
     initialize: function () {
