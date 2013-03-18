@@ -304,7 +304,6 @@ app.FindView = Backbone.View.extend({
 });
 
 app.SearchFormView = Backbone.View.extend({
-    // TODO: Extend backbone events. Emit a custom "search" event and listen to it ex. in the map view to adjust the map based on the request (ex. center on search position and set a pushpin marker, etc.)
     className: 'search-form',
 
     template: _.template($('#tpl-search-form').html()),
@@ -315,20 +314,20 @@ app.SearchFormView = Backbone.View.extend({
         this.listenTo(app.location, 'errorGettingCurrentPosition', this.onChangeLocation);
     },
 
-    render: function () {
-        this.$el.html(this.template());
-        if (this.collection.length === 0) {
-            this.$('#advanced-search-ops').show();
-        }
-        return this;
-    },
-
     events: {
         'click #search-options-btn': 'onClickSearchOptionsBtn'
         , 'click #search-btn': 'onClickSearchBtn'
         , 'click #show-all-btn': 'onClickShowAllBtn'
         , 'submit #search-form': 'onSubmit'
         , 'click #set-location-link': 'onClickSetLocationLink'
+    },
+
+    render: function () {
+        this.$el.html(this.template());
+        if (this.collection.length === 0) {
+            this.$('#advanced-search-ops').show();
+        }
+        return this;
     },
 
     onClickSearchOptionsBtn: function() {
@@ -385,11 +384,18 @@ app.SearchFormView = Backbone.View.extend({
 
     search: function() {
         this.hideSearchOps();
+        this.$('#search-loading-anim').show();
         this.collection.fetch({data: {
             q: this.$('#input_q').val(),
             lat: app.location.get('lat'),
             lng: app.location.get('lng'),
             radius: this.$('#input_radius').val()
+        },
+        success: function() {
+            this.$('#search-loading-anim').hide();
+        },
+        error:  function() {
+            this.$('#search-loading-anim').hide();
         }});
     }
 });

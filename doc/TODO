@@ -4,8 +4,6 @@ Playground site TODOs
 Client
 ------
 
-* Add a loading animation when searching and when geocoding an address.
-
 * Map needs to reset markers when collection is reset.
 
 * Sometimes the set location loading animation doesn't disappear. (Fixed?)
