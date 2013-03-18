@@ -4,19 +4,27 @@ Playground site TODOs
 Client
 ------
 
-* Make search work
+* Add a loading animation when searching and when geocoding an address.
 
-* Show full search options on initial page load. Collapse when showing search results.
+* Map needs to reset markers when collection is reset.
+
+* Sometimes the set location loading animation doesn't disappear. (Fixed?)
+
+* Show result count after searching.
+
+* Add typeahead support in search field
+
 * Add search options. Indoor/outdoor, food onsite, basketball hoops, search by name (with typeahead?), ...
 * Maybe do it all with tags? Then use a single search field, allowing to search by name or tag.
-* Default to "near you". Allow to edit location and radius, or disable it.
-* Have a show all option.
-* Add a "search" button (magnifying glass icon) next to list/map. Make it open the search-list panel, with search form expanded.
-  In onecol layout, hide the list when the search form is expanded?
-* Refactor the search code. Make search form fire an event that the map view listens on to pin the source position.
-
 
 * Allow to view original size image
+* Show more details on the detail page.
+
+* Don't re-render the list or map after showing details. Just hide them and re-show them.
+  This should be faster, and make it easier to maintain state.
+
+* Figure out how to show navigation to additional places. About, add playground, login, etc.
+* Make an about page.
 
 * Make URL navigation and forward/back work well.
 * SEO: slug urls and hashbang stuff for individual playgrounds.
