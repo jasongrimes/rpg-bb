@@ -4,11 +4,17 @@ html, body {
 .highlight {
     background-color: #fff780;
 }
-input[type=text] {
+input[type=text],input[type=number],input[type=search],select {
     width: 100%;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     height: 28px;
+}
+@media all and (max-width: 480px) {
+    input[type=text],input[type=number],input[type=search] {
+        /* Set a font-size of at least 16px to prevent auto-zooming in iOS. */
+        font-size: 16px;
+    }
 }
 /* Header */
 #header {
@@ -44,7 +50,7 @@ input[type=text] {
     float: right;
 }
 
-/* Search/list panel */
+/* Search/list sidebar */
 #search-list {
     overflow: auto;
     -webkit-overflow-scrolling: touch;
@@ -53,47 +59,81 @@ input[type=text] {
     float: left;
     width: 270px;
 }
+/* Search form */
+.search-form {
+    position: relative;
+    padding: 3px;
+}
+.search-form form {
+    margin-bottom: 0px;
+}
+/* Main search query input field */
+.search-form .input-append {
+    position: relative;
+    width: 100%;
+    height: 30px;
+}
+.search-form .input-append .search-query {
+    padding-left: 25px;
+    left: 0px;
+    right: 30px;
+    width: auto;
+    position: absolute;
+}
+.search-form .input-append .btn {
+    height: 28px;
+    padding: 4px 8px;
+    position: absolute;
+    right: 0px;
+    width: 31px;
+}
+.search-form .icon-search {
+    position: absolute;
+    top: 6px;
+    left: 7px;
+    opacity: 0.4;
+    z-index:100;
+}
+/* Additional search options */
+.extra-search-ops {
+    display: none;
+    padding: 5px;
+}
+/*
+.extra-search-ops label {
+    width: 50px;
+    text-align: right;
+    margin-right: 5px;
+    height: 28px;
+}
+.extra-search-ops input, .extra-search-ops select, .extra-search-ops .input {
+    display: inline;
+}
+*/
+/* Override horizontal form settings from bootstrap.css */
+.form-horizontal .control-label {
+    width: 50px;
+}
+.form-horizontal .controls {
+    margin-left: 60px;
+}
+.form-horizontal .control-group {
+    margin-bottom: 5px;
+}
+
+/* Map */
+#map-info-panel > div {
+    padding: 5px;
+    background-color: #fcf8e3;
+}
+
+/* Playground list */
 .list-item-buttons {
     opacity: 0.3;
     position: absolute;
     right: 0px;
     bottom: 3px;
 }
-/*
-#sidebar.twocol-layout {
-    float: left;
-    width: 270px;
-}
-#main {
-}
-*/
-.search-field {
-    position: relative;
-}
-.search-field .search-query {
-    padding-left: 29px;
-}
-.search-field .icon-search {
-    position: absolute;
-    top: 9px;
-    left: 11px;
-    opacity: 0.4;
-}
-.search-field .icon-chevron-down {
-    position: absolute;
-    top: 9px;
-    right: 11px;
-    opacity: 0.4;
-    cursor: pointer;
-}
-.search-field .icon-chevron-down:hover {
-    opacity: 0.8;
-}
-#map-info-panel > div {
-    padding: 5px;
-    background-color: #fcf8e3;
-}
-/* Playground list */
 #playground-list {
     overflow: auto;
     -webkit-overflow-scrolling: touch;

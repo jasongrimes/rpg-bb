@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
         <!--link href="css/bootstrap-responsive.css" rel="stylesheet"-->
+        <link href="css/bootstrap-modal.css" rel="stylesheet">
         <link rel="stylesheet" href="css/styles.css" />
         <link href="/img/favicon.ico" rel="shortcut icon" type="image/vnd.microsoft.icon" >
     </head>
@@ -12,6 +13,7 @@
     <body>
         <div id="header"></div>
         <div id="content"></div>
+        <div id="get-location-modal" class="modal hide" tabindex="-1" role="dialog"></div>
 
         <!-- Templates -->
         <script type="text/template" id="tpl-header">
@@ -44,16 +46,70 @@
         </script>
 
         <script type="text/template" id="tpl-search-form">
-            <!--
-            <form class="form-inline" style="display: inline;">
-                Near <a href="#">current location</a>
-                <input type="button" id="search-btn" value="Search" class="btn">
+            <form id="search-form" class="form-search form-horizontal">
+
+                <!--div class="input-append">
+                    <input id="input_q" type="text" name="search" class="search-query" placeholder="Find playgrounds...">
+                    <button id="search-options-btn" type="button" class="btn" title="Search options"><i id="search-options-btn-icon" class="icon-chevron-down"></i></button>
+                    <div class="icon-search"></div>
+                </div-->
+
+                <div style="position: relative; padding-right: 29px;">
+                    <input style="padding-left: 25px; border-radius: 14px 0 0 14px; width:100%; height: 28px;" id="input_q" type="text" name="search" placeholder="Find playgrounds...">
+                    <button style="padding: 0 2px 0 0; width: 30px; -moz-border-radius: 0 14px 14px 0; -webkit-border-radius: 0 14px 14px 0; border-radius: 0 14px 14px 0; position: absolute; right: 0; top: 0; height: 28px;" id="search-options-btn" type="button" class="btn" title="Search options"><i id="search-options-btn-icon" class="icon-chevron-down"></i></button>
+                    <div class="icon-search"></div>
+                </div>
+
+                <div id="advanced-search-ops" class="extra-search-ops">
+                    <div class="control-group">
+                        <label class="control-label">Within</label>
+                        <div class="controls">
+                            <select id="input_radius" style="width:auto;">
+                                <option value="">any distance</option>
+                                <option value="5">5 miles</option>
+                                <option value="10">10 miles</option>
+                                <option value="25">25 miles</option>
+                                <option value="50">50 miles</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label">of</label>
+                        <div class="controls" style="padding-top: 5px;">
+                            <a id="set-location-link" href="#">where?</a>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls">
+                            <input id="search-btn" type="button" class="btn btn-primary" value="Search">
+                            <input id="show-all-btn" type="button" class="btn" value="Show all">
+                        </div>
+                    </div>
+
+                </div>
             </form>
-            -->
-            <div class="search-field" style="padding: 3px; display: none;">
-                <div class="icon-search"></div>
-                <input type="text" class="search-query" placeholder="Filter playgrounds..."/>
-                <div class="icon-chevron-down toggle-search-options"></div>
+        </script>
+
+        <script type="text/template" id="tpl-get-location-modal">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                <h3>Set your location</h3>
+            </div>
+
+            <div class="modal-body">
+                <a id="detect-location-link" href="#">Detect your location automatically</a>
+                <br/><br/>
+                or use the following address:
+                <br/>
+
+                <form id="set-location-address">
+                    <input id="input_location_address" type="text" name="address">
+                    <input type="submit" class="btn" value="Set address">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
             </div>
         </script>
 
@@ -112,6 +168,9 @@
         <script src="js/lib/backbone.js"></script>
         <script src="js/lib/bootstrap.min.js"></script>
         <script src="js/lib/jquery.scrollTo.min.js"></script>
+        <script src="js/lib/bootstrap-modalmanager.js"></script>
+        <script src="js/lib/bootstrap-modal.js"></script>
+
         <script src="initial-data.js.php"></script>
         <script src="js/app.js"></script>
 

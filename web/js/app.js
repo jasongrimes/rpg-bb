@@ -4,6 +4,7 @@ var app = app || {};
 
 app.Playground = Backbone.Model.extend({
     urlRoot: "/api/playgrounds",
+    // TODO: Get rid of these defaults
     defaults: {
         "id": null,
         "name": "",
@@ -23,6 +24,53 @@ app.Playgrounds = Backbone.Collection.extend({
     setSelected: function (playground) {
         this.selected = playground;
         this.trigger('selectPlayground', playground);
+    }
+});
+
+app.Location = Backbone.Model.extend({
+    getCurrentPosition: function(showErrors) {
+        this.trigger('beforeGetCurrentPosition');
+
+        if (navigator.geolocation) {
+            var self = this;
+            navigator.geolocation.getCurrentPosition(function (position) {
+                var coords = position.coords || position.coordinate || position;
+                self.setCurrentPosition(coords.latitude, coords.longitude);
+            }, function (err) { if (showErrors) self.showGeolocateError(err); });
+        } else {
+            this.trigger('errorGettingCurrentPosition');
+            if (showErrors) this.showGeolocateError(-1);
+        }
+    },
+
+    getPositionByAddress: function(address, options) {
+        var options = options || {};
+        var self = this;
+        var geocoder = new google.maps.Geocoder();
+        geocoder.geocode({address: address}, function(results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                self.setCurrentPosition(results[0].geometry.location.lat(), results[0].geometry.location.lng(), results[0].formatted_address);
+                if (typeof options.success == 'function') options.success();
+            } else {
+                if (typeof options.error == 'function') options.error();
+            }
+        });
+    },
+
+    setCurrentPosition: function(lat, lng, address) {
+        this.set({lat: lat, lng: lng, address: address});
+    },
+
+    showGeolocateError: function (err) {
+        var msg;
+        switch(err.code) {
+            case err.UNKNOWN_ERROR:        msg = "Unable to find your location"; break;
+            case err.PERMISSION_DENIED:    msg = "Permission denied in finding your location"; break;
+            case err.POSITION_UNAVAILABLE: msg = "Your location is currently unknown"; break;
+            case err.BREAK:                msg = "Attempt to find location took too long"; break;
+            default:                       msg = "Location detection not supported in browser";
+        }
+        alert(msg);
     }
 });
 
@@ -135,7 +183,7 @@ app.FindView = Backbone.View.extend({
     viewName: 'find',
 
     initialize: function() {
-        this.searchFormView = new app.SearchFormView();
+        this.searchFormView = new app.SearchFormView({collection: this.collection});
         this.listView = new app.ListView({collection: this.collection});
         this.mapView = new app.MapView({collection: this.collection});
 
@@ -232,9 +280,7 @@ app.FindView = Backbone.View.extend({
     },
 
     clickListBtn: function () {
-        console.log('clickListBtn');
         app.viewman.compactFindView = 'list';
-        console.log(app.viewman.compactFindView);
         this.updateCompactView();
     },
 
@@ -259,75 +305,147 @@ app.FindView = Backbone.View.extend({
 
 app.SearchFormView = Backbone.View.extend({
     // TODO: Extend backbone events. Emit a custom "search" event and listen to it ex. in the map view to adjust the map based on the request (ex. center on search position and set a pushpin marker, etc.)
-    tagName: 'div',
-
     className: 'search-form',
 
     template: _.template($('#tpl-search-form').html()),
 
-    render: function (eventName) {
+    initialize: function() {
+        this.listenTo(app.location, 'change', this.onChangeLocation);
+        this.listenTo(app.location, 'beforeGetCurrentPosition', this.onBeforeGetCurrentPosition);
+        this.listenTo(app.location, 'errorGettingCurrentPosition', this.onChangeLocation);
+    },
+
+    render: function () {
         this.$el.html(this.template());
+        if (this.collection.length === 0) {
+            this.$('#advanced-search-ops').show();
+        }
         return this;
     },
 
-    // Stores request data that was collected from the form and sent to the REST API.
-    requestData: {},
+    events: {
+        'click #search-options-btn': 'onClickSearchOptionsBtn'
+        , 'click #search-btn': 'onClickSearchBtn'
+        , 'click #show-all-btn': 'onClickShowAllBtn'
+        , 'submit #search-form': 'onSubmit'
+        , 'click #set-location-link': 'onClickSetLocationLink'
+    },
+
+    onClickSearchOptionsBtn: function() {
+        $('#advanced-search-ops').is(':visible') ? this.hideSearchOps() : this.showSearchOps();
+    },
+
+    onClickSearchBtn: function() {
+        this.search();
+    },
+
+    onClickShowAllBtn: function() {
+        $('#input_q').val('');
+        $('#input_radius').val('');
+        this.search();
+    },
+
+    onSubmit: function(event) {
+        event.preventDefault();
+        this.search();
+    },
+
+    onClickSetLocationLink: function(event) {
+        event.preventDefault();
+        app.getLocationModalView.showModal();
+    },
+
+    onBeforeGetCurrentPosition: function() {
+        this.$('#set-location-link').html('<img src="img/loading-bar.gif" style="width: 150px;"/>');
+    },
+
+    onChangeLocation: function() {
+        var label;
+        if (!app.location.get('lat') || !app.location.get('lng')) {
+            label = 'where?';
+        } else if (app.location.get('address')) {
+            label = app.location.get('address');
+        } else {
+            label = 'your current location.'
+        }
+        this.$('#set-location-link').text(label);
+    },
+
+    showSearchOps: function() {
+        $('#advanced-search-ops').slideDown({complete: function() {
+            $('#search-options-btn-icon').removeClass('icon-chevron-down').addClass('icon-chevron-up');
+        }});
+    },
+
+    hideSearchOps: function() {
+        $('#advanced-search-ops').slideUp({complete: function() {
+            $('#search-options-btn-icon').removeClass('icon-chevron-up').addClass('icon-chevron-down');
+        }});
+    },
+
+    search: function() {
+        this.hideSearchOps();
+        this.collection.fetch({data: {
+            q: this.$('#input_q').val(),
+            lat: app.location.get('lat'),
+            lng: app.location.get('lng'),
+            radius: this.$('#input_radius').val()
+        }});
+    }
+});
+
+app.GetLocationModalView = Backbone.View.extend({
+    template: _.template($('#tpl-get-location-modal').html()),
 
     events: {
-        'click #search-btn': 'clickSearch',
-        'click .toggle-search-options': 'toggleSearchOps'
+         'click #detect-location-link': 'onClickDetectLocation'
+        , 'submit #set-location-address': 'onSubmitSetAddress'
     },
 
-    toggleSearchOps: function (event) {
-        alert('Toggle');
-        event.stopPropagation();
+    initialize: function() {
+        this.$modalEl = $('#get-location-modal');
+        this.render();
+    },
+
+    render: function() {
+        this.$el.html(this.template());
+
+        this.$modalEl.html(this.el);
+        this.$modalEl.modal({show: false});
+
+        return this;
+    },
+
+    showModal: function() {
+        this.$modalEl.modal('show');
+        if (app.viewman.currentLayout == 'full') this.$('#input_location_address').focus();
+        this.$('#input_location_address').val(app.location.get('address'));
+    },
+
+    hideModal: function() {
+        this.$modalEl.modal('hide');
+    },
+
+    onClickDetectLocation: function(event) {
         event.preventDefault();
+        this.hideModal();
+        app.location.getCurrentPosition(true);
     },
 
-    clickSearch: function () {
+    onSubmitSetAddress: function(event) {
+        event.preventDefault();
+
         var self = this;
+        app.location.getPositionByAddress(this.$('#input_location_address').val(), {
+            success: function() {
+                self.hideModal();
+            },
+            error: function() {
+                alert('Geocoding failed for that address.'+"\n\n"+'It might help to try again with a less specific address.');
+            }
+        });
 
-        if (this.lat && this.lng) {
-            this.searchPlaygrounds({lat: lat, lng: lng});
-            return;
-        }
-
-        // this.searchPlaygrounds();
-
-        // Get the user's current location.
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function (position) {
-                var coords = position.coords || position.coordinate || position;
-                app.currentPosition = {lat: coords.latitude, lng: coords.longitude};
-                self.searchPlaygrounds(app.currentPosition);
-            }, self.geolocateError)
-        } else {
-            this.geolocateError(-1);
-        }
-    },
-
-    searchNearGeocodedPosition: function (position) {
-        var coords = position.coords || position.coordinate || position;
-        /*
-        $("#current-lat").val(coords.latitude);
-        $("#current-lng").val(coords.longitude);
-        */
-
-        searchLocationsNear(coords.latitude, coords.longitude);
-    },
-
-    geolocateError: function (err) {
-        var msg;
-        switch(err.code) {
-            case err.UNKNOWN_ERROR:        msg = "Unable to find your location"; break;
-            case err.PERMISSION_DENINED:   msg = "Permission denied in finding your location"; break;
-            case err.POSITION_UNAVAILABLE: msg = "Your location is currently unknown"; break;
-            case err.BREAK:                msg = "Attempt to find location took too long"; break;
-            default:                       msg = "Location detection not supported in browser";
-        }
-        alert(msg);
     }
-
 });
 
 app.MapView = Backbone.View.extend({
@@ -352,6 +470,7 @@ app.MapView = Backbone.View.extend({
         this.listenTo(this.collection, 'add', this.addPlaygroundMarker);
         this.listenTo(this.collection, 'reset', this.addPlaygroundMarkers);
         this.listenTo(app.viewman, 'changeLayout', this.updateLayout);
+        this.listenTo(app.location, 'change', this.onChangeLocation);
 
         this.$mapInfoPanel = $('<div/>', {id: 'map-info-panel'});
         this.$el.append(this.$mapInfoPanel);
@@ -481,6 +600,18 @@ app.MapView = Backbone.View.extend({
         }
     },
 
+    onChangeLocation: function() {
+        if (this.currentLocationMarker) this.currentLocationMarker.setMap(null);
+        if (app.location.get('lat') && app.location.get('lng')) {
+            this.currentLocationMarker = new google.maps.Marker({
+                position: new google.maps.LatLng(app.location.get('lat'), app.location.get('lng')),
+                map: this.map,
+                icon: 'img/blue-measle-halo.png'
+            });
+            this.currentLocationMarker.setZIndex(0);
+        }
+    },
+
     beforeClose: function () {
         if (this.infoPanelView) {
             this.infoPanelView.close();
@@ -534,8 +665,8 @@ app.ListView = Backbone.View.extend({
 
     // TODO: Should this just be the render method?
     addPlaygrounds: function () {
-        // _.each(this.collection.models, function (playground) {
-        self = this;
+        this.$el.empty();
+        var self = this;
         this.collection.each(function (playground) {
            self.addPlayground(playground);
         });
@@ -592,11 +723,11 @@ app.ListView = Backbone.View.extend({
     setButtonVisibility: function () {
         // Set visibility of buttons depending on the current layout.
         if (app.viewman.currentLayout == 'full') {
-            this.$el.find('.view-on-map-btn').hide();
-            this.$el.find('.view-details-btn').show();
+            this.$('.view-on-map-btn').hide();
+            this.$('.view-details-btn').show();
         } else if (app.viewman.compactFindView == 'list') {
-            this.$el.find('.view-on-map-btn').show();
-            this.$el.find('.view-details-btn').hide();
+            this.$('.view-on-map-btn').show();
+            this.$('.view-details-btn').hide();
         }
     }
 });
@@ -698,13 +829,14 @@ app.Router = Backbone.Router.extend({
     },
 
     initialize: function () {
-        var self = this;
+        // var self = this;
 
         // Determine the layout based on client screen size.
         app.viewman.determineLayout();
 
         // Initialize the models
         app.playgrounds = new app.Playgrounds();
+        app.location = new app.Location();
 
         // Render the header
         app.headerView = new app.HeaderView({el: $('#header')});
@@ -719,6 +851,8 @@ app.Router = Backbone.Router.extend({
             app.playgrounds.reset(app.initialPlaygroundData);
         }
         */
+
+        /*
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(function (position) {
                 var coords = position.coords || position.coordinate || position;
@@ -727,14 +861,17 @@ app.Router = Backbone.Router.extend({
         } else {
             app.playgrounds.fetch();
         }
+        */
     },
 
     find: function () {
         app.findView = new app.FindView({collection: app.playgrounds});
+        app.getLocationModalView = new app.GetLocationModalView({model: app.location});
 
         app.viewman.showView(app.findView, '#content');
 
         app.findView.mapView.resizeMap(); // Need to kick Google map after the element is actually inserted into the DOM.
+        app.location.getCurrentPosition();
     },
 
     details: function (id) {
@@ -757,19 +894,8 @@ app.Router = Backbone.Router.extend({
                 callback(model);
             }});
         }
-    },
-
-    showGeolocateError: function (err) {
-        var msg;
-        switch(err.code) {
-            case err.UNKNOWN_ERROR:        msg = "Unable to find your location"; break;
-            case err.PERMISSION_DENINED:   msg = "Permission denied in finding your location"; break;
-            case err.POSITION_UNAVAILABLE: msg = "Your location is currently unknown"; break;
-            case err.BREAK:                msg = "Attempt to find location took too long"; break;
-            default:                       msg = "Location detection not supported in browser";
-        }
-        alert(msg);
     }
+
 });
 
 // Initialization -------------------------
