@@ -68,6 +68,28 @@ input[type=text],input[type=number],input[type=search],select {
     margin-bottom: 0px;
 }
 /* Main search query input field */
+.search-field-container {
+    position: relative;
+    padding-right: 29px;
+}
+input.search-field-input {
+    padding-left: 25px;
+    border-radius: 14px 0 0 14px;
+    width:100%;
+    height: 28px;
+}
+.search-field-btn {
+    padding: 0 2px 0 0;
+    width: 30px;
+    -moz-border-radius: 0 14px 14px 0;
+    -webkit-border-radius: 0 14px 14px 0;
+    border-radius: 0 14px 14px 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 28px;
+}
+
 .search-form .input-append {
     position: relative;
     width: 100%;
@@ -99,17 +121,6 @@ input[type=text],input[type=number],input[type=search],select {
     display: none;
     padding: 5px;
 }
-/*
-.extra-search-ops label {
-    width: 50px;
-    text-align: right;
-    margin-right: 5px;
-    height: 28px;
-}
-.extra-search-ops input, .extra-search-ops select, .extra-search-ops .input {
-    display: inline;
-}
-*/
 /* Override horizontal form settings from bootstrap.css */
 .form-horizontal .control-label {
     width: 50px;
