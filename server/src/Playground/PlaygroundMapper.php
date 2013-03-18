@@ -70,12 +70,7 @@ class PlaygroundMapper
     {
         $params = array();
 
-        $is_geo_search = (array_key_exists('lat', $criteria) && array_key_exists('lng', $criteria));
-        /*
-        if ($is_geo_search && !array_key_exists('radius', $criteria)) {
-            $criteria['radius'] = 100;
-        }
-        */
+        $is_geo_search = array_key_exists('lat', $criteria) && array_key_exists('lng', $criteria) && $criteria['lat'] != '' && $criteria['lng'] != '';
 
         $sql = 'SELECT * ';
 
@@ -95,9 +90,14 @@ class PlaygroundMapper
             $params['id'] = $criteria['id'];
         }
 
+        if (array_key_exists('q', $criteria) && $criteria['q']) {
+            $sql .= 'AND name LIKE :q ';
+            $params['q'] = '%' . $criteria['q'] . '%';
+        }
+
         if ($is_geo_search) {
             $sql .= 'GROUP BY id '; // TODO: Is this needed anymore?
-            if (array_key_exists('radius', $criteria)) {
+            if (array_key_exists('radius', $criteria) && $criteria['radius'] > 0) {
                 $sql .= 'HAVING distance < :radius ';
                 $params['radius'] = $criteria['radius'];
             }
