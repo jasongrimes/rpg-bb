@@ -36,7 +36,10 @@ app.Location = Backbone.Model.extend({
             navigator.geolocation.getCurrentPosition(function (position) {
                 var coords = position.coords || position.coordinate || position;
                 self.setCurrentPosition(coords.latitude, coords.longitude);
-            }, function (err) { if (showErrors) self.showGeolocateError(err); });
+            }, function (err) {
+                self.trigger('errorGettingCurrentPosition');
+                if (showErrors) self.showGeolocateError(err);
+            });
         } else {
             this.trigger('errorGettingCurrentPosition');
             if (showErrors) this.showGeolocateError(-1);
@@ -64,11 +67,11 @@ app.Location = Backbone.Model.extend({
     showGeolocateError: function (err) {
         var msg;
         switch(err.code) {
-            case err.UNKNOWN_ERROR:        msg = "Unable to find your location"; break;
-            case err.PERMISSION_DENIED:    msg = "Permission denied in finding your location"; break;
-            case err.POSITION_UNAVAILABLE: msg = "Your location is currently unknown"; break;
-            case err.BREAK:                msg = "Attempt to find location took too long"; break;
-            default:                       msg = "Location detection not supported in browser";
+            case err.UNKNOWN_ERROR:        msg = 'Unable to find your location.'; break;
+            case err.PERMISSION_DENIED:    msg = 'Permission denied in finding your location.'; break;
+            case err.POSITION_UNAVAILABLE: msg = 'Your location is currently unknown.'; break;
+            case err.BREAK:                msg = 'Attempt to find location took too long.'; break;
+            default:                       msg = 'Location detection not supported in browser.';
         }
         alert(msg);
     }
@@ -447,7 +450,7 @@ app.GetLocationModalView = Backbone.View.extend({
                 self.hideModal();
             },
             error: function() {
-                alert('Geocoding failed for that address.'+"\n\n"+'It might help to try again with a less specific address.');
+                alert('Geocoding failed for that address.');
             }
         });
 

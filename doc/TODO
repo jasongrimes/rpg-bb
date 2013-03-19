@@ -6,8 +6,6 @@ Client
 
 * Map needs to reset markers when collection is reset.
 
-* Sometimes the set location loading animation doesn't disappear. (Fixed?)
-
 * Show result count after searching.
 
 * Add typeahead support in search field
