@@ -4,11 +4,9 @@ Playground site TODOs
 Client
 ------
 
-* Map needs to reset markers when collection is reset.
+* Add typeahead support in search field
 
 * Show result count after searching.
-
-* Add typeahead support in search field
 
 * Add search options. Indoor/outdoor, food onsite, basketball hoops, search by name (with typeahead?), ...
 * Maybe do it all with tags? Then use a single search field, allowing to search by name or tag.

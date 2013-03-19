@@ -525,6 +525,8 @@ app.MapView = Backbone.View.extend({
     },
 
     addPlaygroundMarkers: function () {
+        this.clearMarkers();
+
         // TODO: Could use this.collection.each ?
         _.each(this.collection.models, function (playground) {
             this.addPlaygroundMarker(playground);
@@ -547,6 +549,12 @@ app.MapView = Backbone.View.extend({
             app.playgrounds.setSelected(model);
         });
 
+    },
+
+    clearMarkers: function() {
+        _.each(this.playgroundMarkers, function(marker) {
+            marker.setMap(null);
+        }, this);
     },
 
     recenterMap: function () {
