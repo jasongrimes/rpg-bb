@@ -327,6 +327,7 @@ app.SearchFormView = Backbone.View.extend({
 
     render: function () {
         this.$el.html(this.template());
+        this.$('#input_q').typeahead({source: app.TYPEAHEAD_DATA});
         if (this.collection.length === 0) {
             this.$('#advanced-search-ops').show();
         }

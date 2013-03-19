@@ -4,15 +4,13 @@ Playground site TODOs
 Client
 ------
 
-* Add typeahead support in search field
+* Show more details on the detail page.
+* Allow to view original size image
 
 * Show result count after searching.
 
 * Add search options. Indoor/outdoor, food onsite, basketball hoops, search by name (with typeahead?), ...
 * Maybe do it all with tags? Then use a single search field, allowing to search by name or tag.
-
-* Allow to view original size image
-* Show more details on the detail page.
 
 * Don't re-render the list or map after showing details. Just hide them and re-show them.
   This should be faster, and make it easier to maintain state.
@@ -23,9 +21,10 @@ Client
 * Make URL navigation and forward/back work well.
 * SEO: slug urls and hashbang stuff for individual playgrounds.
 
+* Add login support
 * Add support for comments/ratings
-* Allow to add/edit playgrounds
 * Allow to upload images. How to integrate w/iPhone?
+* Allow to add/edit playgrounds
 
 * Integrate with Facebook
 ** Like a playground

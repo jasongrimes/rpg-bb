@@ -63,6 +63,7 @@ input[type=text],input[type=number],input[type=search],select {
 .search-form {
     position: relative;
     padding: 3px;
+    z-index: 3; /* Needed to prevent typeahead dropdown from overlapping the playground list in iOS Safari. */
 }
 .search-form form {
     margin-bottom: 0px;
@@ -122,13 +123,13 @@ input.search-field-input {
     position: absolute;
     top: 30px;
     left: 0px;
-    width: 250px;
+    right: 0px;
     padding: 10px;
-    border: 1px solid #ccc;
     background-color: #fff;
     z-index: 2;
     opacity: 0.9;
 }
+
 /* Additional search options */
 .extra-search-ops {
     display: none;

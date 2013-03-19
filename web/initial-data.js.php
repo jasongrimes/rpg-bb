@@ -15,8 +15,13 @@ $app = require '../server/app.php';
 
 $playgrounds = $app['playground_mapper']->getPlaygrounds();
 
+$typeahead_data = array();
+foreach ($playgrounds as $playground) {
+    $typeahead_data[] = $playground->name;
+}
+
 header('Content-Type: text/javascript');
 ?>
 
 var app = app || {};
-app.initialPlaygroundData = <?php echo json_encode($playgrounds->toArray()) ?: 'null'; ?>;
+app.TYPEAHEAD_DATA = <?php echo json_encode($typeahead_data) ?: 'null'; ?>;
