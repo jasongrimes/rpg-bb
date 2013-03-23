@@ -29,19 +29,20 @@ app.Playgrounds = Backbone.Collection.extend({
 
 app.Location = Backbone.Model.extend({
     getCurrentPosition: function(showErrors) {
-        this.trigger('beforeGetCurrentPosition');
+        this.trigger('getpos:before');
 
         if (navigator.geolocation) {
             var self = this;
             navigator.geolocation.getCurrentPosition(function (position) {
                 var coords = position.coords || position.coordinate || position;
                 self.setCurrentPosition(coords.latitude, coords.longitude);
+                self.trigger('getpos:after');
             }, function (err) {
-                self.trigger('errorGettingCurrentPosition');
+                self.trigger('getpos:error');
                 if (showErrors) self.showGeolocateError(err);
             });
         } else {
-            this.trigger('errorGettingCurrentPosition');
+            this.trigger('getpos:error');
             if (showErrors) this.showGeolocateError(-1);
         }
     },
@@ -312,9 +313,9 @@ app.SearchFormView = Backbone.View.extend({
     template: _.template($('#tpl-search-form').html()),
 
     initialize: function() {
-        this.listenTo(app.location, 'change', this.onChangeLocation);
-        this.listenTo(app.location, 'beforeGetCurrentPosition', this.onBeforeGetCurrentPosition);
-        this.listenTo(app.location, 'errorGettingCurrentPosition', this.onChangeLocation);
+        this.listenTo(app.location, 'getpos:before', this.showLocationLoadingAnim);
+        this.listenTo(app.location, 'getpos:error', this.setLocationLabel);
+        this.listenTo(app.location, 'getpos:after', this.setLocationLabel);
     },
 
     events: {
@@ -358,11 +359,11 @@ app.SearchFormView = Backbone.View.extend({
         app.getLocationModalView.showModal();
     },
 
-    onBeforeGetCurrentPosition: function() {
+    showLocationLoadingAnim: function() {
         this.$('#set-location-link').html('<img src="img/loading-bar.gif" style="width: 150px;"/>');
     },
 
-    onChangeLocation: function() {
+    setLocationLabel: function() {
         var label;
         if (!app.location.get('lat') || !app.location.get('lng')) {
             label = 'where?';
